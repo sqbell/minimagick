@@ -97,12 +97,13 @@ module MiniMagick
 
       if openable.is_a?(URI::Generic)
         ext ||= File.extname(openable.path)
+        ext.sub!(/:.*/, '') # hack for filenames or URLs that include a colon
+        openable.open(options) { |file| read(file, ext) }
       else
         ext ||= File.extname(openable.to_s)
+        ext.sub!(/:.*/, '') # hack for filenames or URLs that include a colon
+        openable.open(**options) { |file| read(file, ext) }
       end
-      ext.sub!(/:.*/, '') # hack for filenames or URLs that include a colon
-
-      openable.open(options) { |file| read(file, ext) }
     end
 
     ##
